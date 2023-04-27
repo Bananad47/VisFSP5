@@ -1,0 +1,19 @@
+[tool.black]
+line-length=79
+extend-exclude='''
+(
+    \.git
+  | \.mypy_cache
+  | \.venv
+  | migrations
+)
+'''
+[tool.isort] 
+default_section = "THIRDPARTY" 
+known_local_folder = ["VisFSP", "VisFSPclient"]
+sections = ["FUTURE","STDLIB","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"] 
+skip = [".gitignore", "venv", "env"] 
+skip_glob = ["*/migrations/*"] 
+multi_line_output = 3
+line_length = 79
+lines_after_imports = 2
