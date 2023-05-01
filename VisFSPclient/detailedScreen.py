@@ -24,7 +24,7 @@ from PyQt5.QtCore import (
     QThread,
     QTime,
     QTimer,
-    pyqtSignal,
+    pyqtSignal
 )
 from PyQt5.QtGui import QBrush, QColor, QIcon, QPixmap
 from PyQt5.QtWidgets import (
@@ -39,7 +39,7 @@ from PyQt5.QtWidgets import (
     QStyle,
     QStyleFactory,
     QTableWidgetItem,
-    QWidget,
+    QWidget
 )
 
 
@@ -368,15 +368,3 @@ class Detailed(QDialog):
             msg = QMessageBox()
             msg.about(self, "Ошибка", "Это последний элемент")
             msg.setIcon(QMessageBox.Warning)
-
-
-def main():
-    app = QApplication(sys.argv)
-    win = Detailed(12)
-    sys.exit(app.exec_())
-    exit()
-
-
-if __name__ == "__main__":
-    main()
-    exit()

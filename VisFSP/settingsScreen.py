@@ -1,26 +1,13 @@
-import sys
-
 import sql_test_module
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import QDateTime, Qt, QThread, QTime, QTimer, pyqtSignal
-from PyQt5.QtGui import QBrush, QColor, QIcon, QPixmap
-from PyQt5.QtWidgets import (
-    QApplication,
-    QDialog,
-    QFormLayout,
-    QLabel,
-    QLineEdit,
-    QMainWindow,
-    QMessageBox,
-    QStyle,
-    QStyleFactory,
-    QTableWidgetItem,
-    QWidget,
-)
+from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtWidgets import QDialog, QLabel, QLineEdit, QMessageBox
 from qtwidgets import Toggle
 
 
 class ToggleSwitch(Toggle):  # размер 200/40
+    """переключатели"""
+
     def __init__(self, window, text=""):
         super().__init__()
         self.label = QtWidgets.QLabel()
@@ -41,6 +28,8 @@ class ToggleSwitch(Toggle):  # размер 200/40
 
 
 class PasswordClass(QLineEdit):
+    """ввод пароля"""
+
     def __init__(self, window):
         super().__init__()
         self.passwordLabel = QLabel()
@@ -56,6 +45,8 @@ class PasswordClass(QLineEdit):
 
 
 class LineEdit(QtWidgets.QLineEdit):
+    """редактрование полей ввода"""
+
     def __init__(self, window, text=""):
         super().__init__()
         self.setFont(QtGui.QFont("Times", 12))
@@ -77,6 +68,8 @@ class LineEdit(QtWidgets.QLineEdit):
 
 
 class Settings(QDialog):
+    """само окно настроек"""
+
     errorsig = pyqtSignal()
 
     def __init__(self):
@@ -88,6 +81,7 @@ class Settings(QDialog):
         self.exec_()
 
     def setupUi(self):
+        """создание окна"""
         self.setObjectName("Form")
         self.setFixedSize(755, 650)
         self.setFont(QtGui.QFont("Times", 11))
@@ -157,6 +151,7 @@ class Settings(QDialog):
         self.tabWidget.setCurrentIndex(0)
 
     def setupTab1(self):
+        """создание 1 окна"""
         self.tab1label = QLabel(self.tab)
         self.tab.setFont(QtGui.QFont("Times", 11))
         self.tab1label.setGeometry(QtCore.QRect(10, 5, 200, 25))
@@ -206,6 +201,7 @@ class Settings(QDialog):
         self.toggle_16.setObjectName("checkBox_16")
 
     def setupTab2(self):
+        """создание 2 окна"""
         self.tab_2.setFont(QtGui.QFont("Times", 12))
         self.tab1label = QLabel(self.tab_2)
         self.tab1label.setGeometry(QtCore.QRect(10, 5, 200, 25))
@@ -355,31 +351,8 @@ class Settings(QDialog):
         self.lineEdit12.setAlignment(Qt.AlignRight)
         self.lineEdit12_2.setAlignment(Qt.AlignRight)
 
-        self.spinLabel = QtWidgets.QLabel(self.tab_2)
-        self.spinLabel.setText("Текущий набор допусков")
-        self.spinLabel.setGeometry(QtCore.QRect(10, 450, 200, 30))
-
-        self.spin = QtWidgets.QSpinBox(self.tab_2)
-        self.spin.setGeometry(QtCore.QRect(220, 450, 50, 30))
-        self.spin.setRange(1, 10)
-        self.spin.lineEdit().setStyleSheet(
-            "selection-color: black;" "selection-background-color: white;"
-        )
-        self.spin.lineEdit().setReadOnly(True)
-        self.spin.lineEdit().setFocusPolicy(Qt.NoFocus)
-        self.spin.valueChanged.connect(self.changeSpinList)
-
-        self.spin2Labelmain = QtWidgets.QLabel(self.tab_2)
-        self.spin2Labelmain.setText("Текущий активный набор допусков")
-        self.spin2Labelmain.setGeometry(QtCore.QRect(370, 450, 300, 30))
-
-    def changeSpinList(self):
-        num = self.sender().value()
-        self.addDefaultData(num=num)
-
-    # cd C:\Users\user\Desktop\VisFSPnew\VisFSP\
-
-    def addDefaultData(self, num=11):
+    def addDefaultData(self):
+        """заполняет дефолтные значение настроек"""
         # tab1 setChecked
         tabs1toggle = [
             self.toggle_10,
@@ -419,10 +392,7 @@ class Settings(QDialog):
             self.lineEdit12,
         ]
         try:
-            l1, l2 = sql_test_module.settingsData(num)
-            if num == 11:
-                num = l2["actual_tolerance"]
-                self.setupDefaultSpinValue(num)
+            l1, l2 = sql_test_module.settingsData(1)
             l1 = [True if l1[x] == 1 else False for x in l1]
             names = [
                 "diag_w",
@@ -454,12 +424,8 @@ class Settings(QDialog):
 
             for name, data in zip(tab2names, l2):
                 name.setText(data)
-        except:
+        finally:
             self.errorsig.emit()
-
-    def setupDefaultSpinValue(self, num):
-        self.spin.setValue(int(num))
-        self.spin2Labelmain.setText(f"Текущий активный набор допусков {num}")
 
     def checkPassword(self):
         try:
@@ -469,6 +435,7 @@ class Settings(QDialog):
             self.errorsig.emit()
 
     def updateData(self):
+        """обновляет настройки"""
         self.checkPassword()
 
         tabs1toggle = [
@@ -510,7 +477,7 @@ class Settings(QDialog):
         ]
         p = 0
 
-        if not self.checkPassword():
+        if not self.checkPassword():  # провекрка пароля
             msg = QMessageBox()
             msg.setStyleSheet(
                 "border-width: 0;"
@@ -551,16 +518,12 @@ class Settings(QDialog):
 
         if p == 0:
             try:
-                num = self.spin.value()
-                l2.append(str(num))
-                sql_test_module.updateSettings(l1, l2, num)
+                l2.append(str(1))
+                sql_test_module.updateSettings(l1, l2, 1)
 
-                _, num = sql_test_module.settingsData(11)
+                _, num = sql_test_module.settingsData(1)
                 num = num["actual_tolerance"]
-                l1, l2 = sql_test_module.settingsData(num)
-                self.spin2Labelmain.setText(
-                    f"Текущий активный набор допусков {num}"
-                )
+                l1, l2 = sql_test_module.settingsData(1)
                 names = [
                     "diag_w",
                     "diag_b",
@@ -587,19 +550,7 @@ class Settings(QDialog):
                 ]
                 l2 = [l2[x] for x in names] + [str(num)]
                 l1 = [l1[x] for x in l1]
-                sql_test_module.updateSettings(l1, l2, 11)
-
+                sql_test_module.updateSettings(l1, l2, 1)
                 self.close()
             except:
                 self.errorsig.emit()
-
-
-def main():
-    app = QApplication(sys.argv)
-    win = Settings()
-    sys.exit(app.exec_())
-    exit()
-
-
-if __name__ == "__main__":
-    main()

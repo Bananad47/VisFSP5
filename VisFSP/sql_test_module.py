@@ -4,6 +4,8 @@ import pymysql
 
 
 def create_sql_connection(func):
+    """декоратор который создает подключение к бд"""
+
     def import_settings():
         with open("sql_settings.json", "r") as file:
             settings = json.load(file)
@@ -25,70 +27,79 @@ def create_sql_connection(func):
     def pass_connection(*args, **kwargs):
         connection, table = create_connection()
         cur = connection.cursor()
-        return func(*args, **kwargs, cur=cur, table=table, con=connection)
+        return func(*args, **kwargs, cur=cur, con=connection)
 
     return pass_connection
 
 
 @create_sql_connection
-def sql_all_data(limit, cur="", table="", con=""):
-    cur.execute(
-        "SELECT * FROM {} ORDER BY id DESC LIMIT {}".format(table, limit)
-    )
+def sql_all_data(limit, cur="", con=""):
+    """достает определенное кол-во последних элементов из бд"""
+    cur.execute("SELECT * FROM lists ORDER BY id DESC LIMIT {}".format(limit))
     rows = cur.fetchall()
+    cur.close()
     return rows
 
 
 @create_sql_connection
-def sql_search_data(id, cur="", table="", con=""):
-    cur.execute("SELECT * FROM {} WHERE id = {}".format(table, id))
+def sql_search_data(idx, cur="", con=""):
+    """достает определенное стекло"""
+    cur.execute("SELECT * FROM lists WHERE id = {}".format(idx))
     row = cur.fetchone()
+    cur.close()
     return row
 
 
 @create_sql_connection
-def last_item_id(cur="", table="", con=""):
-    cur.execute("SELECT * FROM {} ORDER BY id DESC LIMIT 1".format(table))
-    Id = str(cur.fetchone()["id"])
-    return Id
+def last_item_id(cur="", con=""):
+    """достает id последнего элемента бд"""
+    print("OK STARTED")
+    cur.execute("SELECT id FROM lists ORDER BY id DESC LIMIT 1")
+    idx = cur.fetchone()["id"]
+    cur.close()
+    return idx
 
 
 @create_sql_connection
-def new_rows(num, cur="", table="", con=""):
-    cur.execute(
-        "SELECT * FROM {} ORDER BY id DESC LIMIT {}".format(table, num)
-    )
-    return cur.fetchall()[::-1]
+def new_rows(cnt, cur="", con=""):
+    """достает последние ряды из бд"""
+    cur.execute("SELECT * FROM lists ORDER BY id DESC LIMIT {}".format(cnt))
+    rows = cur.fetchall()[::-1]
+    cur.close()
+    return rows
 
 
 @create_sql_connection
-def statistic(date_from, date_to, cur="", table="", con=""):
+def statistic(date_from, date_to, cur="", con=""):
+    """достает кол-во элементов с разными статусами для статистики"""
     l = []
     date_to += " 23:59:59"
     date_from += " 0:00:00"
     cur.execute(
-        "SELECT COUNT(1) FROM `{}` WHERE date >= '{}' AND date <= '{}' AND `status` = '1'".format(
-            table, date_from, date_to
+        "SELECT COUNT(1) FROM `lists` WHERE date >= '{}' AND date <= '{}' AND `status` = '1'".format(
+            date_from, date_to
         )
     )
     l.append(cur.fetchone()["COUNT(1)"])
     cur.execute(
-        "SELECT COUNT(1) FROM `{}` WHERE date >= '{}' AND date <= '{}' AND `status` = '2'".format(
-            table, date_from, date_to
+        "SELECT COUNT(1) FROM `lists` WHERE date >= '{}' AND date <= '{}' AND `status` = '2'".format(
+            date_from, date_to
         )
     )
     l.append(cur.fetchone()["COUNT(1)"])
     cur.execute(
-        "SELECT COUNT(1) FROM `{}` WHERE date >= '{}' AND date <= '{}' AND `status` = '3'".format(
-            table, date_from, date_to
+        "SELECT COUNT(1) FROM `lists` WHERE date >= '{}' AND date <= '{}' AND `status` = '3'".format(
+            date_from, date_to
         )
     )
     l.append(cur.fetchone()["COUNT(1)"])
+    cur.close()
     return l
 
 
 @create_sql_connection
-def updateSettings(l1, l2, num, cur="", table="", con=""):
+def updateSettings(l1, l2, num, cur="", con=""):
+    """обновляет настройки"""
     names = [
         "diag_w",
         "diag_b",
@@ -136,11 +147,13 @@ def updateSettings(l1, l2, num, cur="", table="", con=""):
         con.commit()
     cur.execute("UPDATE `service` SET `change_tools` = '1'")
     con.commit()
+    cur.close()
     return 0
 
 
 @create_sql_connection
-def settingsData(num, cur="", table="", con=""):
+def settingsData(num, cur="", con=""):
+    """получаем текущие настройки"""
     names = [
         "diag_w",
         "diag_b",
@@ -171,33 +184,39 @@ def settingsData(num, cur="", table="", con=""):
     l = cur.fetchone()
     cur.execute("SELECT * FROM `tools`")
     l2 = cur.fetchone()
+    cur.close()
     return l2, l
 
 
 @create_sql_connection
-def checkUpdate(cur="", table="", con=""):
+def checkUpdate(cur="", con=""):
+    """проверяем обновление"""
     cur.execute("SELECT * FROM `service`")
     ans = cur.fetchone()
     if ans["scan"] == 1:
         cur.execute("UPDATE `service` SET `scan` = '0'")
         con.commit()
+    cur.close()
     return ans
 
 
 @create_sql_connection
-def search(data, datestart, datefinish, cur="", table="", con=""):
+def search(data, datestart, datefinish, cur="", con=""):
+    """поиск для окна поиска"""
     if not True in data:
         return []
     l = " or ".join([f"status = {i}" for x, i in zip(data, range(1, 4)) if x])
 
-    s = f"SELECT * FROM `{table}` WHERE date >= "
-    "'{datestart}' AND date <= '{datefinish}' AND ({l})"
+    s = f"SELECT * FROM `lists` WHERE date >= '{datestart}' AND date <= '{datefinish}' AND ({l})"
     cur.execute(s)
     k = cur.fetchall()
+    cur.close()
     return k
 
 
 @create_sql_connection
-def getPassword(cur="", table="", con=""):
+def getPassword(cur="", con=""):
+    """получаем пароль для изменения настроек"""
     cur.execute("SELECT `password` FROM `service`")
+    cur.close()
     return cur.fetchone()

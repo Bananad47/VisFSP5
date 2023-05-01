@@ -3,7 +3,7 @@
   "DB_port": 3306,
   "DB_login": "root",
   "DB_password": "root",
-  "DB_name": "fsp",
+  "DB_name": "fsp_test",
   "Main_table_name": "lists",
   "Settings_table_name": "Settings"
 }

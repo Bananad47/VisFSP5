@@ -1,47 +1,25 @@
-import random
 import sys
 
 import detailedScreen
 import sql_test_module
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.Qt import Qt
-from PyQt5.QtChart import (
-    QBarCategoryAxis,
-    QBarSeries,
-    QBarSet,
-    QChart,
-    QChartView,
-    QValueAxis,
-)
-from PyQt5.QtCore import *
-from PyQt5.QtCore import (
-    QDate,
-    QDateTime,
-    Qt,
-    QThread,
-    QTime,
-    QTimer,
-    pyqtSignal,
-)
-from PyQt5.QtGui import *
-from PyQt5.QtGui import QBrush, QColor, QIcon, QPainter, QPixmap
-from PyQt5.QtWidgets import *
+from PyQt5.QtCore import QDate, pyqtSignal
+from PyQt5.QtGui import QBrush, QColor, QPixmap, QTextCharFormat
 from PyQt5.QtWidgets import (
+    QAbstractItemView,
     QApplication,
-    QDateEdit,
     QDialog,
-    QFormLayout,
     QLabel,
-    QMainWindow,
-    QStyle,
-    QStyleFactory,
-    QTableWidgetItem,
-    QWidget,
+    QPushButton,
+    QTableWidgetItem
 )
-from qtwidgets import AnimatedToggle, Toggle
+from qtwidgets import Toggle
 
 
 class Tableclass(QtWidgets.QWidget):
+    """таблица"""
+
     def __init__(self, mainwindow):
         super().__init__()
         self.setFont(QtGui.QFont("Times", 12))
@@ -67,10 +45,12 @@ class Tableclass(QtWidgets.QWidget):
         self.Table.itemClicked.connect(self.openDetailedScreen)
 
     def openDetailedScreen(self, item):
+        """открытие детального экрана"""
         Id = self.Table.item(item.row(), 0).text()
         self.detailed = detailedScreen.Detailed(Id)
 
     def addtableitems(self, rows):
+        """добавление в таблицу новых элементов"""
         self.Table.setRowCount(0)
         data = rows
         self.Table.setRowCount(len(data))
@@ -128,7 +108,9 @@ class Tableclass(QtWidgets.QWidget):
             self.Table.item(i, 1).setFont(font)
 
 
-class ToggleSwitch(Toggle):  # размер 200/40
+class ToggleSwitch(Toggle):
+    """создание переключателей"""
+
     def __init__(self, window, text=""):
         super().__init__()
         self.label = QtWidgets.QLabel()
@@ -149,9 +131,12 @@ class ToggleSwitch(Toggle):  # размер 200/40
 
 
 class Finder(QDialog):
+    """окно поиска"""
+
     errorsig = pyqtSignal()
 
     def __init__(self):
+        """создаение самого окна"""
         super().__init__()
         self.setObjectName("Form")
         self.setFixedSize(800, 700)  # 800 220
@@ -188,39 +173,39 @@ class Finder(QDialog):
         self.calendar1 = Calendarpro()
         self.calendar1.setStyleSheet(
             """
-		#qt_calendar_prevmonth, #qt_calendar_nextmonth {
-		    border: none;                  
-		    color: white;
-		    font-weight: bold; 
-		    qproperty-icon: none;    
-		    background-color: transparent;
-		}
-		#qt_calendar_prevmonth {
-		    qproperty-text: "<";  
-		}
-		#qt_calendar_nextmonth {
-		    qproperty-text: ">";
-		}
-		"""
+            #qt_calendar_prevmonth, #qt_calendar_nextmonth {
+                border: none;
+                color: white;
+                font-weight: bold;
+                qproperty-icon: none;
+                background-color: transparent;
+            }
+            #qt_calendar_prevmonth {
+                qproperty-text: "<";
+            }
+            #qt_calendar_nextmonth {
+                qproperty-text: ">";
+            }
+            """
         )
 
         self.calendar2 = Calendarpro()
         self.calendar2.setStyleSheet(
             """
-		#qt_calendar_prevmonth, #qt_calendar_nextmonth {
-		    border: none;                  
-		    color: white;
-		    font-weight: bold; 
-		    qproperty-icon: none;    
-		    background-color: transparent;
-		}
-		#qt_calendar_prevmonth {
-		    qproperty-text: "<";  
-		}
-		#qt_calendar_nextmonth {
-		    qproperty-text: ">";
-		}
-		"""
+            #qt_calendar_prevmonth, #qt_calendar_nextmonth {
+                border: none;
+                color: white;
+                font-weight: bold;
+                qproperty-icon: none;
+                background-color: transparent;
+            }
+            #qt_calendar_prevmonth {
+                qproperty-text: "<";
+            }
+            #qt_calendar_nextmonth {
+                qproperty-text: ">";
+            }
+            """
         )
 
         self.startdate.setCalendarWidget(self.calendar1)
@@ -283,6 +268,7 @@ class Finder(QDialog):
         self.exec_()
 
     def find(self):
+        """выполняем поиск и заполняем таблицу"""
         l = [
             self.toggle1.isChecked(),
             self.toggle2.isChecked(),
@@ -298,6 +284,8 @@ class Finder(QDialog):
 
 
 class MyCalendar(QtWidgets.QCalendarWidget):
+    """календарь"""
+
     def __init__(self, parent=None):
         QtWidgets.QCalendarWidget.__init__(self, parent)
 
@@ -310,6 +298,8 @@ class MyCalendar(QtWidgets.QCalendarWidget):
 
 
 class Calendarpro(MyCalendar):
+    """календарь"""
+
     def __init__(self):
         super().__init__()
         self.setGeometry(QtCore.QRect(200, 200, 200, 100))
@@ -317,20 +307,20 @@ class Calendarpro(MyCalendar):
 
         self.setStyleSheet(
             """
-		#qt_calendar_prevmonth, #qt_calendar_nextmonth {
-		    border: none;                  
-		    color: white;
-		    font-weight: bold; 
-		    qproperty-icon: none;    
-		    background-color: transparent;
-		}
-		#qt_calendar_prevmonth {
-		    qproperty-text: "<";  
-		}
-		#qt_calendar_nextmonth {
-		    qproperty-text: ">";
-		}
-		"""
+            #qt_calendar_prevmonth, #qt_calendar_nextmonth {
+                border: none;
+                color: white;
+                font-weight: bold;
+                qproperty-icon: none;
+                background-color: transparent;
+            }
+            #qt_calendar_prevmonth {
+                qproperty-text: "<";
+            }
+            #qt_calendar_nextmonth {
+                qproperty-text: ">";
+            }
+            """
         )
 
         self.weekendFormat = QTextCharFormat()
@@ -344,12 +334,3 @@ class Calendarpro(MyCalendar):
         self.setVerticalHeaderFormat(
             QtWidgets.QCalendarWidget.NoVerticalHeader
         )
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = Finder()
-    # window.show()
-
-    sys.exit(app.exec_())
-    exit()

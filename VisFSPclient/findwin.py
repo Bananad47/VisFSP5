@@ -11,7 +11,7 @@ from PyQt5.QtChart import (
     QBarSet,
     QChart,
     QChartView,
-    QValueAxis,
+    QValueAxis
 )
 from PyQt5.QtCore import *
 from PyQt5.QtCore import (
@@ -21,7 +21,7 @@ from PyQt5.QtCore import (
     QThread,
     QTime,
     QTimer,
-    pyqtSignal,
+    pyqtSignal
 )
 from PyQt5.QtGui import *
 from PyQt5.QtGui import QBrush, QColor, QIcon, QPainter, QPixmap
@@ -36,7 +36,7 @@ from PyQt5.QtWidgets import (
     QStyle,
     QStyleFactory,
     QTableWidgetItem,
-    QWidget,
+    QWidget
 )
 from qtwidgets import AnimatedToggle, Toggle
 
@@ -344,12 +344,3 @@ class Calendarpro(MyCalendar):
         self.setVerticalHeaderFormat(
             QtWidgets.QCalendarWidget.NoVerticalHeader
         )
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = Finder()
-    # window.show()
-
-    sys.exit(app.exec_())
-    exit()

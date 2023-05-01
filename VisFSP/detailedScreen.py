@@ -9,11 +9,13 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QMessageBox,
     QTableWidgetItem,
-    QWidget,
+    QWidget
 )
 
 
 class Graph(QtWidgets.QWidget):
+    """класс отвечающий за график"""
+
     def __init__(self, data):
         super().__init__()
 
@@ -26,6 +28,7 @@ class Graph(QtWidgets.QWidget):
         layout.addWidget(self.view)
 
     def set_plot(self):
+        """заполняем график данными, которые получили при создании обьекта класса"""
         outline = self.data.pop(0)
         scatter = pg.ScatterPlotItem(size=7, brush=pg.mkBrush(255, 0, 0, 255))
         self.curve = self.view.plot(name="Line")
@@ -38,16 +41,19 @@ class Graph(QtWidgets.QWidget):
 
 
 class Detailed(QDialog):
-    errorsig = pyqtSignal()
+    """сам детальный экран"""
 
-    def __init__(self, Id):
+    errorsig = pyqtSignal()  # сигнал для ошибок в случае чего
+
+    def __init__(self, idx):
         super().__init__()
-        self.Id = Id
+        self.Id = idx
         self.setupUi()
         self.setupTables()
         self.exec_()
 
     def setupUi(self):
+        """создаем само окно"""
         self.setObjectName("Form")
         self.setFixedSize(820, 680)
         self.setWindowFlags(Qt.FramelessWindowHint)
@@ -188,11 +194,12 @@ class Detailed(QDialog):
     def setupImage(
         self, data
     ):  ######################################################################################################## стереть data и убрать коментарий со следущей строки
+        """создаем график"""
         # data = json.dumps(data)
         data = [
             [[5, 5, 7, 10, 10, 5], [20, 13, 10, 10, 20, 20]],
             [[6, 8, 10], [18, 15, 12]],
-        ]
+        ]  # это пример данных, его потом нужно удалить и добавить data = json.dumps(data) для распаковки json
 
         self.graph = Graph(data)
 
@@ -202,6 +209,7 @@ class Detailed(QDialog):
         return 0
 
     def setupTables(self):
+        """настраиваем таблицы и заполняеми значениями"""
         names = ["date", "id", "tolerance"]
         names2 = [
             "length_n",
@@ -322,13 +330,14 @@ class Detailed(QDialog):
                         self.bigTable.item(1, i // 2).setForeground(
                             QColor(210, 210, 0)
                         )
-        finally:
+        except:
             self.errorsig.emit()
 
     def new_detailed_win(self, id):
+        """создание нового детального экрана и закрытие текущего"""
         try:
             p = int(sql_test_module.last_item_id())
-        finally:
+        except:
             self.errorsig.emit()
         if id <= p and id >= 1:
             Detailed(str(id))

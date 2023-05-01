@@ -1,5 +1,3 @@
-import sys
-
 import sql_test_module
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.Qt import Qt
@@ -9,24 +7,21 @@ from PyQt5.QtChart import (
     QBarSet,
     QChart,
     QChartView,
-    QValueAxis,
+    QValueAxis
 )
 from PyQt5.QtCore import QDate, pyqtSignal
 from PyQt5.QtGui import QBrush, QColor, QTextCharFormat
-from PyQt5.QtWidgets import (
-    QApplication,
-    QDialog,
-    QLabel,
-    QPushButton,
-    QVBoxLayout,
-)
+from PyQt5.QtWidgets import QDialog, QLabel, QPushButton, QVBoxLayout
 
 
 class BarChat(QChart):
+    """график"""
+
     def __init__(self, mainwindow):
         super().__init__()
 
         self.chartView = QChartView(self)
+        # self.chartView.show()
 
         self.wid = QtWidgets.QWidget(mainwindow)
         self.wid.setGeometry(QtCore.QRect(0, 30, 800, 590))
@@ -36,8 +31,7 @@ class BarChat(QChart):
         self.setTitle("")
         self.names = (
             '<font size="5" style="color: rgb(0, 150, 0);">Норма</font>',
-            '<font size="5" style="color: rgb(210, 210, 0);">'
-            'Предупреждение</font>',
+            '<font size="5" style="color: rgb(210, 210, 0);">Предупреждение</font>',
             '<font size="5" style="color: rgb(255, 0, 0);">Брак</font>',
         )
         self.axisX = QBarCategoryAxis()
@@ -64,6 +58,7 @@ class Statistics(QDialog):
     errorsig = pyqtSignal()
 
     def __init__(self):
+        """создание окна"""
         super().__init__()
         self.setObjectName("Form")
         self.setFixedSize(800, 700)
@@ -140,11 +135,12 @@ class Statistics(QDialog):
         try:
             data = sql_test_module.statistic(date1, date2)
             self.bar.addData(data)
-        finally:
+        except:
             self.errorsig.emit()
         self.exec_()
 
     def test(self):
+        """полученние данных из календаря"""
         sender = self.sender()
         self.calendar = Calendarpro()
         date = self.calendar.selectedDate()
@@ -158,17 +154,20 @@ class Statistics(QDialog):
             self.UpdateData(sender)
 
     def UpdateData(self, sender):
+        """строим график"""
         newDate = self.calendar.newDate
         sender.setText(newDate)
+        num = int(sender.text()[-1])
         date1 = self.datebtn1.text()
         date2 = self.datebtn2.text()
-        try:
-            data = sql_test_module.statistic(date1, date2)
-            self.bar.addData(data)
-        finally:
-            self.errorsig.emit()
+        # try:
+        data = sql_test_module.statistic(date1, date2)
+        self.bar.addData(data)
+        # except:
+        # self.errorsig.emit()
 
 
+# дальше идуь календари
 class Calendarpro(QDialog):
     signal = pyqtSignal()
 
@@ -181,20 +180,20 @@ class Calendarpro(QDialog):
 
         self.setStyleSheet(
             """
-            #qt_calendar_prevmonth, #qt_calendar_nextmonth {
-                border: none;
-                color: white;
-                font-weight: bold;
-                qproperty-icon: none;
-                background-color: transparent;
-            }
-            #qt_calendar_prevmonth {
-                qproperty-text: "<";
-            }
-            #qt_calendar_nextmonth {
-                qproperty-text: ">";
-            }
-            """
+		#qt_calendar_prevmonth, #qt_calendar_nextmonth {
+		    border: none;                  
+		    color: white;
+		    font-weight: bold; 
+		    qproperty-icon: none;    
+		    background-color: transparent;
+		}
+		#qt_calendar_prevmonth {
+		    qproperty-text: "<";  
+		}
+		#qt_calendar_nextmonth {
+		    qproperty-text: ">";
+		}
+		"""
         )
 
         self.weekendFormat = QTextCharFormat()
@@ -245,11 +244,3 @@ class MyCalendar(QtWidgets.QCalendarWidget):
 
     def setDate(self, date):
         QtWidgets.QCalendarWidget.setDate(date)
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = Statistics()
-
-    exit()
-    sys.exit(app.exec_())

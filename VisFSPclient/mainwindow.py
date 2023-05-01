@@ -21,11 +21,13 @@ from PyQt5.QtWidgets import (
     QStyle,
     QTableWidgetItem,
     QVBoxLayout,
-    QWidget,
+    QWidget
 )
 
 
 class ImageLabel(QtWidgets.QGraphicsView):  ###########################
+    """без понятия что оно делает, скорее всего за лого отвечает"""
+
     def __init__(self, *args, **kwargs):
         super(ImageLabel, self).__init__(*args, **kwargs)
         self.setScene(QtWidgets.QGraphicsScene())
@@ -47,6 +49,8 @@ class ImageLabel(QtWidgets.QGraphicsView):  ###########################
 
 
 class Information(QFrame):
+    """виджет информации(типо скорости и статуса)"""
+
     def __init__(self, text, info=""):
         super().__init__()
         self.text = text
@@ -81,6 +85,8 @@ class Information(QFrame):
 
 
 class Time(QFrame):
+    """виджет времени"""
+
     def __init__(self, text=""):
         super().__init__()
         self.setStyleSheet(
@@ -106,8 +112,12 @@ class Time(QFrame):
 
 
 class MainWindow(QMainWindow):
+    """само окно"""
+
     def setupUi(self):
+        """создаем само окно"""
         self.setObjectName("MainWindow")
+        self.showFullScreen()  # это удалить если нужно не во весь экран
         self.setFont(QtGui.QFont("Times", 12))
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
@@ -117,6 +127,8 @@ class MainWindow(QMainWindow):
         timer = QTimer(self)
         timer.timeout.connect(self.showTime)
         timer.start(1000)
+
+        # дальше идет создание кнопок и тд
 
         self.pushButton = QtWidgets.QPushButton()
         self.pushButton.setObjectName("pushButton")
@@ -227,6 +239,7 @@ class MainWindow(QMainWindow):
         self.createWorker()
 
     def testFunc(self, item):
+        """функция которая делает видимым боковое меню с настройками и тд"""
         if item.isVisible():
             item.hide()
         else:
@@ -234,6 +247,7 @@ class MainWindow(QMainWindow):
             item.show()
 
     def setupTable(self):
+        """настраиваем таблицу"""
         self.Table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         self.Table.setObjectName("listWidget")
@@ -264,9 +278,14 @@ class MainWindow(QMainWindow):
         # self.Table.setColumnWidth(1, 150)
 
     def addDefaultItemInTable(self):
-        self.Table.setRowCount(200)
+        """заполняем таблицу"""
+        self.Table.setRowCount(
+            200
+        )  # тут изменить значение для меньшего кол-ва рядов
         try:
-            data = sql_test_module.sql_all_data(200)
+            data = sql_test_module.sql_all_data(
+                200
+            )  # тут изменить значение для меньшего кол-ва рядов
             self.addtableitems(data)
         except:
             self.errorFunc()
@@ -280,6 +299,8 @@ hh:mm:ss"""
         )
 
         self.timeLabel.setText(label_time)
+
+    # дальше идут функции для открытия чего-то по нажатию на кнопку
 
     def openSearchWin(self):
         self.finder = findwin.Finder()
@@ -299,6 +320,7 @@ hh:mm:ss"""
         self.detailed.errorsig.connect(self.errorFunc)
 
     def addtableitems(self, rows, k=False):
+        """заполняем таблицу значениями(как новыми так и изначальными)"""
         data = rows
         self.namesql = [
             "id",
@@ -417,6 +439,7 @@ hh:mm:ss"""
             self.Table.item(p, 1).setFont(font)
 
     def updateStatus(self):
+        """обновляем статус и информацию"""
         try:
             data = sql_test_module.checkUpdate()
             speed = data["speed"]
@@ -434,9 +457,11 @@ hh:mm:ss"""
             self.errorFunc()
 
     def errorFunc(self):
+        """при ошибках ставим статус ошибки"""
         self.status.setText("Ошибка", color="rgb(255,0,0)")
 
     def createWorker(self):
+        """создаем второй поток"""
         self.thread = QThread()
         self.worker = UpdateSql()
         self.worker.moveToThread(self.thread)
@@ -447,6 +472,7 @@ hh:mm:ss"""
         self.thread.start()
 
     def updateTable(self):
+        """при новых элементах добавляем их в таблицу"""
         try:
             newId = sql_test_module.last_item_id()
             Id = self.Table.item(0, 0)
@@ -464,12 +490,15 @@ hh:mm:ss"""
 
 
 class UpdateSql(QtCore.QObject):
+    """класс для 2 потока"""
+
     app = QApplication(sys.argv)
     newItems = pyqtSignal()
     updateStatusBar = pyqtSignal()
     errorsig = pyqtSignal()
 
     def run(self):
+        """смотрим на наличие апдейтов, если они есть отправляем сигнал в основной поток, чтобы их применить"""
         while True:
             try:
                 update = sql_test_module.checkUpdate()
@@ -482,12 +511,12 @@ class UpdateSql(QtCore.QObject):
 
 
 def main():
+    """запуск приложения"""
     a = QApplication(sys.argv)
     win = MainWindow()
     win.setupUi()
     win.setupTable()
     win.addDefaultItemInTable()
-    win.show()
 
     sys.exit(a.exec_())
     exit()

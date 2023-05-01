@@ -12,7 +12,7 @@ from PyQt5.QtCore import (
     QThread,
     QTime,
     QTimer,
-    pyqtSignal,
+    pyqtSignal
 )
 from PyQt5.QtGui import QBrush, QColor, QIcon, QPixmap
 from PyQt5.QtWidgets import (
@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import (
     QStyle,
     QStyleFactory,
     QTableWidgetItem,
-    QWidget,
+    QWidget
 )
 from qtwidgets import AnimatedToggle, Toggle
 
@@ -381,29 +381,7 @@ class Settings(QDialog):
         self.lineEdit12.setAlignment(Qt.AlignRight)
         self.lineEdit12_2.setAlignment(Qt.AlignRight)
 
-        self.spinLabel = QtWidgets.QLabel(self.tab_2)
-        self.spinLabel.setText("Текущий набор допусков")
-        self.spinLabel.setGeometry(QtCore.QRect(10, 450, 200, 30))
-
-        self.spin = QtWidgets.QSpinBox(self.tab_2)
-        self.spin.setGeometry(QtCore.QRect(220, 450, 50, 30))
-        self.spin.setRange(1, 10)
-        self.spin.lineEdit().setStyleSheet(
-            "selection-color: black;" "selection-background-color: white;"
-        )
-        self.spin.lineEdit().setReadOnly(True)
-        self.spin.lineEdit().setFocusPolicy(Qt.NoFocus)
-        self.spin.valueChanged.connect(self.changeSpinList)
-
-        self.spin2Labelmain = QtWidgets.QLabel(self.tab_2)
-        self.spin2Labelmain.setText("Текущий активный набор допусков")
-        self.spin2Labelmain.setGeometry(QtCore.QRect(370, 450, 300, 30))
-
-    def changeSpinList(self):
-        num = self.sender().value()
-        self.addDefaultData(num=num)
-
-    def addDefaultData(self, num=11):
+    def addDefaultData(self, num=1):
         # tab1 setChecked
         tabs1toggle = [
             self.toggle_10,
@@ -443,10 +421,7 @@ class Settings(QDialog):
             self.lineEdit12,
         ]
         try:
-            l1, l2 = sql_test_module.settingsData(num)
-            if num == 11:
-                num = l2["actual_tolerance"]
-                self.setupDefaultSpinValue(num)
+            l1, l2 = sql_test_module.settingsData(1)
             l1 = [True if l1[x] == 1 else False for x in l1]
             names = [
                 "diag_w",
@@ -483,10 +458,6 @@ class Settings(QDialog):
 
         except:
             self.errorsig.emit()
-
-    def setupDefaultSpinValue(self, num):
-        self.spin.setValue(int(num))
-        self.spin2Labelmain.setText(f"Текущий активный набор допусков {num}")
 
 
 def main():
