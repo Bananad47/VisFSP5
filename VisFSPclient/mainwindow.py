@@ -117,7 +117,6 @@ class MainWindow(QMainWindow):
     def setupUi(self):
         """создаем само окно"""
         self.setObjectName("MainWindow")
-        self.showFullScreen()  # это удалить если нужно не во весь экран
         self.setFont(QtGui.QFont("Times", 12))
         self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
@@ -517,7 +516,7 @@ def main():
     win.setupUi()
     win.setupTable()
     win.addDefaultItemInTable()
-
+    win.show()
     sys.exit(a.exec_())
     exit()
     sys.exit(0)
