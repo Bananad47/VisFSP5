@@ -350,8 +350,27 @@ class Settings(QDialog):
 
         self.lineEdit12.setAlignment(Qt.AlignRight)
         self.lineEdit12_2.setAlignment(Qt.AlignRight)
+        self.spinLabel = QtWidgets.QLabel(self.tab_2)
+        self.spinLabel.setText("Текущий набор допусков")
+        self.spinLabel.setGeometry(QtCore.QRect(10, 450, 200, 30))
 
-    def addDefaultData(self):
+        self.spin = QtWidgets.QSpinBox(self.tab_2)
+        self.spin.setGeometry(QtCore.QRect(220, 450, 50, 30))
+        self.spin.setRange(1, 10)
+        self.spin.lineEdit().setStyleSheet(
+            "selection-color: black;" "selection-background-color: white;"
+        )
+        self.spin.lineEdit().setReadOnly(True)
+        self.spin.lineEdit().setFocusPolicy(Qt.NoFocus)
+        self.spin.valueChanged.connect(self.changeSpinList)
+
+
+    def changeSpinList(self):
+        num = self.sender().value()
+        self.addDefaultData(num=num)
+
+
+    def addDefaultData(self, num=11):
         """заполняет дефолтные значение настроек"""
         # tab1 setChecked
         tabs1toggle = [
@@ -392,7 +411,10 @@ class Settings(QDialog):
             self.lineEdit12,
         ]
         try:
-            l1, l2 = sql_test_module.settingsData(1)
+            l1, l2 = sql_test_module.settingsData(num)
+            if num == 11:
+                num = l2["actual_tolerance"]
+                self.setupDefaultSpinValue(num)
             l1 = [True if l1[x] == 1 else False for x in l1]
             names = [
                 "diag_w",
@@ -424,8 +446,12 @@ class Settings(QDialog):
 
             for name, data in zip(tab2names, l2):
                 name.setText(data)
-        finally:
+        except:
             self.errorsig.emit()
+    
+    def setupDefaultSpinValue(self, num):
+        self.spin.setValue(int(num))
+
 
     def checkPassword(self):
         try:
@@ -436,7 +462,6 @@ class Settings(QDialog):
 
     def updateData(self):
         """обновляет настройки"""
-        self.checkPassword()
 
         tabs1toggle = [
             self.toggle_10,
@@ -518,12 +543,13 @@ class Settings(QDialog):
 
         if p == 0:
             try:
-                l2.append(str(1))
-                sql_test_module.updateSettings(l1, l2, 1)
+                num = self.spin.value()
+                l2.append(str(num))
+                sql_test_module.updateSettings(l1, l2, num)
 
-                _, num = sql_test_module.settingsData(1)
+                _, num = sql_test_module.settingsData(11)
                 num = num["actual_tolerance"]
-                l1, l2 = sql_test_module.settingsData(1)
+                l1, l2 = sql_test_module.settingsData(num)
                 names = [
                     "diag_w",
                     "diag_b",
@@ -550,7 +576,7 @@ class Settings(QDialog):
                 ]
                 l2 = [l2[x] for x in names] + [str(num)]
                 l1 = [l1[x] for x in l1]
-                sql_test_module.updateSettings(l1, l2, 1)
+                sql_test_module.updateSettings(l1, l2, 11)
                 self.close()
             except:
                 self.errorsig.emit()

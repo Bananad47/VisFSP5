@@ -53,7 +53,6 @@ def sql_search_data(idx, cur="", con=""):
 @create_sql_connection
 def last_item_id(cur="", con=""):
     """достает id последнего элемента бд"""
-    print("OK STARTED")
     cur.execute("SELECT id FROM lists ORDER BY id DESC LIMIT 1")
     idx = cur.fetchone()["id"]
     cur.close()

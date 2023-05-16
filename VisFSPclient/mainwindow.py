@@ -487,6 +487,10 @@ hh:mm:ss"""
         except:
             self.errorFunc()
 
+    def closeEvent(self, event):
+        super().closeEvent()
+        self.worker.get_close()
+        self.pool.waitForDone()
 
 class UpdateSql(QtCore.QObject):
     """класс для 2 потока"""
@@ -507,6 +511,15 @@ class UpdateSql(QtCore.QObject):
                 QtCore.QThread.sleep(2)
             except:
                 self.errorsig.emit()
+
+    def get_close(self):
+        try:
+            sys.exit(a.exec_())
+            exit()
+        except:
+            time.sleep(15)
+            sys.exit(a.exec_())
+            exit()
 
 
 def main():
