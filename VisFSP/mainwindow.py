@@ -483,7 +483,7 @@ hh:mm:ss"""
             else:
                 Id = Id.text()
             num = int(newId) - int(Id)
-            rows = sql_test_module.new_rows(num)[::-1]
+            rows = sql_test_module.new_rows(num)
             self.addtableitems(rows, k)
         except:
             self.errorFunc()
