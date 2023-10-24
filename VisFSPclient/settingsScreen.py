@@ -399,7 +399,8 @@ class Settings(QDialog):
         num = self.sender().value()
         self.addDefaultData(num=num)
 
-    def addDefaultData(self, num=11):
+    def addDefaultData(self, num=1):
+        """заполняет дефолтные значение настроек"""
         # tab1 setChecked
         tabs1toggle = [
             self.toggle_10,
@@ -440,9 +441,7 @@ class Settings(QDialog):
         ]
         try:
             l1, l2 = sql_test_module.settingsData(num)
-            if num == 11:
-                num = l2["actual_tolerance"]
-                self.setupDefaultSpinValue(num)
+            self.setupDefaultSpinValue(num)
             l1 = [True if l1[x] == 1 else False for x in l1]
             names = [
                 "diag_w",
@@ -472,11 +471,9 @@ class Settings(QDialog):
             for toggle, state in zip(tabs1toggle, l1):
                 toggle.setChecked(state)
                 toggle.setReadOnly(True)
-
             for name, data in zip(tab2names, l2):
-                name.setText(data)
+                name.setText(str(data))
                 name.setReadOnly(True)
-
         except:
             self.errorsig.emit()
 

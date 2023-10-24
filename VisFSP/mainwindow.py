@@ -270,7 +270,6 @@ class MainWindow(QMainWindow):
         )
         self.Table.itemClicked.connect(self.openDetailedScreen)
 
-        # self.Table.setColumnWidth(1, 150)
 
     def addDefaultItemInTable(self):
         """заполняем таблицу"""
