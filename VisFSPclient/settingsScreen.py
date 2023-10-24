@@ -12,7 +12,7 @@ from PyQt5.QtCore import (
     QThread,
     QTime,
     QTimer,
-    pyqtSignal
+    pyqtSignal,
 )
 from PyQt5.QtGui import QBrush, QColor, QIcon, QPixmap
 from PyQt5.QtWidgets import (
@@ -26,7 +26,7 @@ from PyQt5.QtWidgets import (
     QStyle,
     QStyleFactory,
     QTableWidgetItem,
-    QWidget
+    QWidget,
 )
 from qtwidgets import AnimatedToggle, Toggle
 
@@ -395,7 +395,6 @@ class Settings(QDialog):
         self.spin.lineEdit().setFocusPolicy(Qt.NoFocus)
         self.spin.valueChanged.connect(self.changeSpinList)
 
-
     def changeSpinList(self):
         num = self.sender().value()
         self.addDefaultData(num=num)
@@ -483,6 +482,7 @@ class Settings(QDialog):
 
     def setupDefaultSpinValue(self, num):
         self.spin.setValue(int(num))
+
 
 def main():
     app = QApplication(sys.argv)

@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import (
     QDialog,
     QLabel,
     QPushButton,
-    QTableWidgetItem
+    QTableWidgetItem,
 )
 from qtwidgets import Toggle
 

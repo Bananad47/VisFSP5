@@ -24,7 +24,7 @@ from PyQt5.QtCore import (
     QThread,
     QTime,
     QTimer,
-    pyqtSignal
+    pyqtSignal,
 )
 from PyQt5.QtGui import QBrush, QColor, QIcon, QPixmap
 from PyQt5.QtWidgets import (
@@ -39,7 +39,7 @@ from PyQt5.QtWidgets import (
     QStyle,
     QStyleFactory,
     QTableWidgetItem,
-    QWidget
+    QWidget,
 )
 
 

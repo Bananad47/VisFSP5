@@ -21,7 +21,7 @@ from PyQt5.QtWidgets import (
     QStyle,
     QTableWidgetItem,
     QVBoxLayout,
-    QWidget
+    QWidget,
 )
 
 
@@ -491,6 +491,7 @@ hh:mm:ss"""
         super().closeEvent()
         self.worker.get_close()
         self.pool.waitForDone()
+
 
 class UpdateSql(QtCore.QObject):
     """класс для 2 потока"""

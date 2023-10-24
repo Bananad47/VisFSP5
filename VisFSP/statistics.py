@@ -7,7 +7,7 @@ from PyQt5.QtChart import (
     QBarSet,
     QChart,
     QChartView,
-    QValueAxis
+    QValueAxis,
 )
 from PyQt5.QtCore import QDate, pyqtSignal
 from PyQt5.QtGui import QBrush, QColor, QTextCharFormat

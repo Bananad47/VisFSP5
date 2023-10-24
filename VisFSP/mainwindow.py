@@ -1,27 +1,22 @@
-import base64
 import statistics
 import sys
 import time
 
 import detailedScreen
 import findwin
-import pymysql
 import settingsScreen
 import sql_test_module
-from PyQt5 import QtCore, QtGui, QtSvg, QtWidgets
-from PyQt5.QtCore import QDate, QDateTime, QThread, QTime, QTimer, pyqtSignal
-from PyQt5.QtGui import QColor, QIcon, QPixmap
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import QDateTime, QThread, QTimer, pyqtSignal
+from PyQt5.QtGui import QColor, QPixmap
 from PyQt5.QtWidgets import (
     QAbstractItemView,
     QApplication,
-    QDialog,
     QFrame,
     QHBoxLayout,
     QMainWindow,
-    QStyle,
     QTableWidgetItem,
     QVBoxLayout,
-    QWidget
 )
 
 
@@ -493,6 +488,7 @@ hh:mm:ss"""
         self.worker.get_close()
         self.pool.waitForDone()
 
+
 class UpdateSql(QtCore.QObject):
     """класс для 2 потока"""
 
@@ -515,7 +511,7 @@ class UpdateSql(QtCore.QObject):
 
     def get_close(self):
         try:
-            sys.exit(a.exec_())
+            sys.exit(self.app.exec_())
             exit()
         except:
             time.sleep(15)

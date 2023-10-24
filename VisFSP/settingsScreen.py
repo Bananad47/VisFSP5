@@ -295,7 +295,7 @@ class Settings(QDialog):
         self.lineEdit10_2.setGeometry(QtCore.QRect(510, 120, 70, 30))
 
         self.label11 = QtWidgets.QLabel(self.tab_2)
-        self.label11.setText("Угол, °")
+        self.label11.setText("Угловой скол, mm")
         self.label11.setFont(QtGui.QFont("Times", 10))
         self.label11.setGeometry(QtCore.QRect(590, 170, 180, 30))
         self.lineEdit11 = QtWidgets.QLineEdit(self.tab_2)
@@ -364,13 +364,11 @@ class Settings(QDialog):
         self.spin.lineEdit().setFocusPolicy(Qt.NoFocus)
         self.spin.valueChanged.connect(self.changeSpinList)
 
-
     def changeSpinList(self):
         num = self.sender().value()
         self.addDefaultData(num=num)
 
-
-    def addDefaultData(self, num=11):
+    def addDefaultData(self, num=1):
         """заполняет дефолтные значение настроек"""
         # tab1 setChecked
         tabs1toggle = [
@@ -412,9 +410,7 @@ class Settings(QDialog):
         ]
         try:
             l1, l2 = sql_test_module.settingsData(num)
-            if num == 11:
-                num = l2["actual_tolerance"]
-                self.setupDefaultSpinValue(num)
+            self.setupDefaultSpinValue(num)
             l1 = [True if l1[x] == 1 else False for x in l1]
             names = [
                 "diag_w",
@@ -443,15 +439,13 @@ class Settings(QDialog):
             l2 = [l2[x] for x in names]
             for toggle, state in zip(tabs1toggle, l1):
                 toggle.setChecked(state)
-
             for name, data in zip(tab2names, l2):
-                name.setText(data)
+                name.setText(str(data))
         except:
             self.errorsig.emit()
-    
+
     def setupDefaultSpinValue(self, num):
         self.spin.setValue(int(num))
-
 
     def checkPassword(self):
         try:
@@ -502,17 +496,9 @@ class Settings(QDialog):
         ]
         p = 0
 
-        if not self.checkPassword():  # провекрка пароля
-            msg = QMessageBox()
-            msg.setStyleSheet(
-                "border-width: 0;"
-                "border-radius: 0;"
-                "border-style: solid;"
-                "border-color: rgb(0, 0, 0)}"
-            )
-            msg.about(self, "Ошибка", "Неверный пароль")
-            msg.setIcon(QMessageBox.Warning)
-            p = 1
+        if not self.checkPassword():
+            # провекрка пароля
+            QMessageBox.warning(self, "Ошибка", "Неверный пароль")
             return 0
 
         l1 = []
@@ -525,58 +511,14 @@ class Settings(QDialog):
 
         for i in tab2names:
             if not i.text().replace(".", "", 1).isdigit():
-                p = 1
-                msg = QMessageBox()
-                msg.setStyleSheet(
-                    "border-width: 0;"
-                    "border-radius: 0;"
-                    "border-style: solid;"
-                    "border-color: rgb(0, 0, 0)}"
-                )
-                msg.about(
-                    self, "Ошибка", "Введенные данные не являются числами"
-                )
-                msg.setIcon(QMessageBox.Warning)
-                return 0
+                QMessageBox.warning(self, "Ошибка", "Введенные данные не являются числами")
 
+                return 0
             l2.append(i.text())
 
-        if p == 0:
-            try:
-                num = self.spin.value()
-                l2.append(str(num))
-                sql_test_module.updateSettings(l1, l2, num)
-
-                _, num = sql_test_module.settingsData(11)
-                num = num["actual_tolerance"]
-                l1, l2 = sql_test_module.settingsData(num)
-                names = [
-                    "diag_w",
-                    "diag_b",
-                    "corner_w",
-                    "corner_b",
-                    "front_rib_w",
-                    "front_rib_b",
-                    "side_rib_w",
-                    "side_rib_b",
-                    "turn_w",
-                    "turn_b",
-                    "position_w",
-                    "position_b",
-                    "length_overlarge_w",
-                    "length_overlarge_b",
-                    "length_extrasmall_w",
-                    "length_extrasmall_b",
-                    "width_overlarge_w",
-                    "width_overlarge_b",
-                    "width_extrasmall_w",
-                    "width_extrasmall_b",
-                    "spot_w",
-                    "spot_b",
-                ]
-                l2 = [l2[x] for x in names] + [str(num)]
-                l1 = [l1[x] for x in l1]
-                sql_test_module.updateSettings(l1, l2, 11)
-                self.close()
-            except:
-                self.errorsig.emit()
+        try:
+            num = self.spin.value()
+            sql_test_module.updateSettings(l1, l2, num)
+            QMessageBox.information(self, "Успех", "Настройки успешно изменены")
+        except:
+            self.errorsig.emit()

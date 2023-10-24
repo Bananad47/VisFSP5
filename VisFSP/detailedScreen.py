@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QMessageBox,
     QTableWidgetItem,
-    QWidget
+    QWidget,
 )
 
 
