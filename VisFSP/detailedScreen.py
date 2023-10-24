@@ -227,6 +227,7 @@ class Detailed(QDialog):
             "spot_n",
             "spot_f",
         ]
+
         try:
             data = sql_test_module.sql_search_data(self.Id)
             self.setupImage(data["image"])
@@ -239,10 +240,10 @@ class Detailed(QDialog):
             data2 = sql_test_module.settingsData(data["tolerance"])[1]
             names3 = [
                 "length_overlarge_"
-                if float(data["length_f"]) >= 0
+                if float(data["length_f"]) - float(data["length_n"]) >= 0
                 else "length_extrasmall_",
                 "width_overlarge_"
-                if float(data["width_f"]) > 0
+                if float(data["width_f"]) - float(data["width_n"]) >= 0
                 else "width_extrasmall_",
                 "position_",
                 "diag_",
@@ -250,7 +251,6 @@ class Detailed(QDialog):
                 "squareness_",
                 "spot_",
             ]
-
             self.statusLabel.setText(
                 'Статус: <font style="color:' + stat[str(data["status"])]
             )
@@ -259,7 +259,6 @@ class Detailed(QDialog):
                 self.smallTable.setItem(
                     0, i, QTableWidgetItem(str(data[names[i]]))
                 )
-
             for i in range(0, 14, 2):
                 if i not in [10, 8, 12]:
                     self.bigTable.setItem(
@@ -268,13 +267,13 @@ class Detailed(QDialog):
                     self.bigTable.setItem(
                         1, i // 2, QTableWidgetItem(str(data[names2[i + 1]]))
                     )
-                    if abs(float(data[names2[i + 1]])) >= float(
+                    if abs(float(data[names2[i + 1]]) - float(data[names2[i]])) >= float(
                         data2[names3[i // 2] + "b"]
                     ):
                         self.bigTable.item(1, i // 2).setForeground(
                             QColor(255, 0, 0)
                         )
-                    elif abs(float(data[names2[i + 1]])) < float(
+                    elif abs(float(data[names2[i + 1]]) - float(data[names2[i]])) < float(
                         data2[names3[i // 2] + "w"]
                     ):
                         self.bigTable.item(1, i // 2).setForeground(

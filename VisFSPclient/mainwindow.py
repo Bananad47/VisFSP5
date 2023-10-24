@@ -328,6 +328,7 @@ hh:mm:ss"""
             "length_f",
             "width_n",
             "width_f",
+            "diag_n",
             "diag_f",
             "squareness_f",
             "tolerance",
@@ -361,15 +362,15 @@ hh:mm:ss"""
         }
         font = QtGui.QFont("Times", 9)
         for i in range(len(data)):
-            settiingsdata = data2 = sql_test_module.settingsData(
+            data2 = sql_test_module.settingsData(
                 data[i]["tolerance"]
             )[1]
             names3 = [
                 "length_overlarge_"
-                if float(data[i]["length_f"]) >= 0
+                if float(data[i]["length_f"]) - float(data[i]["length_n"]) >= 0
                 else "length_extrasmall_",
                 "width_overlarge_"
-                if float(data[i]["width_f"]) > 0
+                if float(data[i]["width_f"]) - float(data[i]["width_n"]) > 0
                 else "width_extrasmall_",
                 "diag_",
                 "squareness_",
@@ -377,18 +378,19 @@ hh:mm:ss"""
             ]
             z = 0
             p = i
+            diff = 0
             if k:
                 self.Table.insertRow(0)
                 self.Table.removeRow(200)
                 p = 0
-            for j in range(12):
-                if j == 11:
-                    self.Table.setItem(p, j, QTableWidgetItem(""))
-                    self.Table.item(p, j).setBackground(
+            for j in range(13):
+                if j == 12:
+                    self.Table.setItem(p, 11, QTableWidgetItem(""))
+                    self.Table.item(p, 11).setBackground(
                         colors[str(data[i]["status"])]
                     )
-                elif j == 10:
-                    defect = str(data[p]["defect"])
+                elif j == 11:
+                    defect = str(data[i]["defect"])
                     if defect != "0":
                         pixmap = QPixmap(icons[defect])
                         pixmap = pixmap.scaledToHeight(25)
@@ -403,40 +405,58 @@ hh:mm:ss"""
                     else:
                         self.Table.setItem(p, 10, QTableWidgetItem(""))
 
-                elif j == 7:
+                elif j == 8:
                     self.Table.setItem(
-                        p, j, QTableWidgetItem(str(data[i][self.namesql[j]]))
+                        p, 7, QTableWidgetItem(str(data[i][self.namesql[j]]))
                     )
                     if data[i]["squareness_f"] == "0":
-                        self.Table.item(p, j).setForeground(QColor(255, 0))
+                        self.Table.item(p, 7).setForeground(QColor(255, 0, 0))
                     else:
-                        self.Table.item(p, j).setForeground(QColor(0, 150, 0))
+                        self.Table.item(p, 7).setForeground(QColor(0, 150, 0))
                     z += 1
-                elif j in [0, 1, 2, 4, 8]:
+                elif j in [0, 1, 2, 4, 9]:
                     self.Table.setItem(
-                        p, j, QTableWidgetItem(str(data[i][self.namesql[j]]))
+                        p, j-diff, QTableWidgetItem(str(data[i][self.namesql[j]]))
                     )
-
-                else:
+                elif j == 10:
                     self.Table.setItem(
-                        p, j, QTableWidgetItem(str(data[i][self.namesql[j]]))
+                        p, 9, QTableWidgetItem(str(data[i][self.namesql[j]]))
                     )
                     if abs(float(data[i][self.namesql[j]])) >= float(
+                        data2[names3[4] + "b"]
+                    ):
+                        self.Table.item(p, 9).setForeground(QColor(255, 0, 0))
+                    elif abs(float(data[i][self.namesql[j]])) < float(
+                        data2[names3[4] + "w"]
+                    ):
+                        self.Table.item(p, 9).setForeground(QColor(0, 150, 0))
+                    else:
+                        self.Table.item(p, 9).setForeground(
+                            QColor(210, 210, 0)
+                        )
+                    z += 1
+                elif j == 6:
+                    diff = 1
+                else:
+                    self.Table.setItem(
+                        p, j-diff, QTableWidgetItem(str(data[i][self.namesql[j]]))
+                    )
+                    if abs(float(data[i][self.namesql[j]]) - float(data[i][self.namesql[j-1]])) >= float(
                         data2[names3[z] + "b"]
                     ):
-                        self.Table.item(p, j).setForeground(QColor(255, 0, 0))
-                    elif abs(float(data[i][self.namesql[j]])) < float(
+                        self.Table.item(p, j-diff).setForeground(QColor(255, 0, 0))
+                    elif abs(float(data[i][self.namesql[j]]) - float(data[i][self.namesql[j-1]])) < float(
                         data2[names3[z] + "w"]
                     ):
-                        self.Table.item(p, j).setForeground(QColor(0, 150, 0))
+                        self.Table.item(p, j-diff).setForeground(QColor(0, 150, 0))
                     else:
-                        self.Table.item(p, j).setForeground(
+                        self.Table.item(p, j-diff).setForeground(
                             QColor(210, 210, 0)
                         )
                     z += 1
 
             self.Table.item(p, 1).setFont(font)
-
+    
     def updateStatus(self):
         """обновляем статус и информацию"""
         try:
