@@ -149,7 +149,7 @@ class MainWindow(QMainWindow):
 
         self.status = Information("Статус: ", "Инспекция")
         self.speed = Information("Скорость: ", "60 м/мин")
-        self.thickness = Information("Толщина:", "4.00мм")
+        #self.thickness = Information("Толщина:", "4.00мм")
 
         self.Table = QtWidgets.QTableWidget()
 
@@ -166,7 +166,6 @@ class MainWindow(QMainWindow):
         self.topLayout.addStretch(2)
         self.topLayout.addWidget(self.status)
         self.topLayout.addWidget(self.speed)
-        self.topLayout.addWidget(self.thickness)
         self.topLayout.addStretch(2)
         self.topLayout.addWidget(self.pushButton)
 
@@ -332,7 +331,7 @@ hh:mm:ss"""
             "diag_f",
             "squareness_f",
             "tolerance",
-            "turn_f",
+            "position_f",
             "defect",
             "status",
         ]
@@ -439,7 +438,7 @@ hh:mm:ss"""
                     diff = 1
                 else:
                     self.Table.setItem(
-                        p, j-diff, QTableWidgetItem(str(data[i][self.namesql[j]]))
+                        p, j-diff, QTableWidgetItem("{:.3f}".format(float(data[i][self.namesql[j]]) - float(data[i][self.namesql[j-1]])))
                     )
                     if abs(float(data[i][self.namesql[j]]) - float(data[i][self.namesql[j-1]])) >= float(
                         data2[names3[z] + "b"]
@@ -462,10 +461,8 @@ hh:mm:ss"""
         try:
             data = sql_test_module.checkUpdate()
             speed = data["speed"]
-            thickness = data["thickness"]
             status = data["status"]
             self.speed.setText(speed + "м/мин", color="rgb(0,0,0)")
-            self.thickness.setText(thickness + "мм", color="rgb(0,0,0)")
             if status == "0":
                 self.status.setText("Ошибка", color="rgb(255,0,0)")
             elif status == "1":
@@ -547,6 +544,7 @@ def main():
     """запуск приложения"""
     a = QApplication(sys.argv)
     win = MainWindow()
+    win.setWindowTitle("FSP")
     win.setupUi()
     win.setupTable()
     win.addDefaultItemInTable()

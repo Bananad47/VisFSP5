@@ -325,7 +325,7 @@ class Settings(QDialog):
         self.lineEdit10_2.setGeometry(QtCore.QRect(510, 120, 70, 30))
 
         self.label11 = QtWidgets.QLabel(self.tab_2)
-        self.label11.setText("Угол, °")
+        self.label11.setText("Угловой скол, mm")
         self.label11.setFont(QtGui.QFont("Times", 10))
         self.label11.setGeometry(QtCore.QRect(590, 170, 180, 30))
         self.lineEdit11 = QtWidgets.QLineEdit(self.tab_2)

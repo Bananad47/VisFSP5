@@ -1,4 +1,4 @@
 @echo off
-cd "C:\Program Files\VisFSP"
-python layouttest.py
-pause
+cd "C:\VisFSPclient"
+python mainwindow.py
+exit
