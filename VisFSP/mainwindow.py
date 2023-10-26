@@ -540,6 +540,7 @@ def main():
     a = QApplication(sys.argv)
     win = MainWindow()
     win.setupUi()
+    win.setWindowTitle("FSP")
     win.setupTable()
     win.addDefaultItemInTable()
 
