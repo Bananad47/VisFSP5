@@ -149,7 +149,7 @@ class MainWindow(QMainWindow):
 
         self.status = Information("Статус: ", "Инспекция")
         self.speed = Information("Скорость: ", "60 м/мин")
-        #self.thickness = Information("Толщина:", "4.00мм")
+        # self.thickness = Information("Толщина:", "4.00мм")
 
         self.Table = QtWidgets.QTableWidget()
 
@@ -160,10 +160,9 @@ class MainWindow(QMainWindow):
 
         self.topLayout = QHBoxLayout()
         self.topLayout.addWidget(self.logo)
-        self.topLayout.addStretch(1)
+        self.topLayout.addStretch(2)
 
         self.topLayout.addWidget(self.timeLabel)
-        self.topLayout.addStretch(2)
         self.topLayout.addWidget(self.status)
         self.topLayout.addWidget(self.speed)
         self.topLayout.addStretch(2)
@@ -415,18 +414,18 @@ hh:mm:ss"""
                     z += 1
                 elif j in [0, 1, 2, 4, 9]:
                     self.Table.setItem(
-                        p, j-diff, QTableWidgetItem(str(data[i][self.namesql[j]]))
+                        p, j - diff, QTableWidgetItem(str(data[i][self.namesql[j]]))
                     )
                 elif j == 10:
                     self.Table.setItem(
                         p, 9, QTableWidgetItem(str(data[i][self.namesql[j]]))
                     )
                     if abs(float(data[i][self.namesql[j]])) >= float(
-                        data2[names3[4] + "b"]
+                            data2[names3[4] + "b"]
                     ):
                         self.Table.item(p, 9).setForeground(QColor(255, 0, 0))
                     elif abs(float(data[i][self.namesql[j]])) < float(
-                        data2[names3[4] + "w"]
+                            data2[names3[4] + "w"]
                     ):
                         self.Table.item(p, 9).setForeground(QColor(0, 150, 0))
                     else:
@@ -438,24 +437,25 @@ hh:mm:ss"""
                     diff = 1
                 else:
                     self.Table.setItem(
-                        p, j-diff, QTableWidgetItem("{:.3f}".format(float(data[i][self.namesql[j]]) - float(data[i][self.namesql[j-1]])))
+                        p, j - diff, QTableWidgetItem(
+                            "{:.3f}".format(float(data[i][self.namesql[j]]) - float(data[i][self.namesql[j - 1]])))
                     )
-                    if abs(float(data[i][self.namesql[j]]) - float(data[i][self.namesql[j-1]])) >= float(
-                        data2[names3[z] + "b"]
+                    if abs(float(data[i][self.namesql[j]]) - float(data[i][self.namesql[j - 1]])) >= float(
+                            data2[names3[z] + "b"]
                     ):
-                        self.Table.item(p, j-diff).setForeground(QColor(255, 0, 0))
-                    elif abs(float(data[i][self.namesql[j]]) - float(data[i][self.namesql[j-1]])) < float(
-                        data2[names3[z] + "w"]
+                        self.Table.item(p, j - diff).setForeground(QColor(255, 0, 0))
+                    elif abs(float(data[i][self.namesql[j]]) - float(data[i][self.namesql[j - 1]])) < float(
+                            data2[names3[z] + "w"]
                     ):
-                        self.Table.item(p, j-diff).setForeground(QColor(0, 150, 0))
+                        self.Table.item(p, j - diff).setForeground(QColor(0, 150, 0))
                     else:
-                        self.Table.item(p, j-diff).setForeground(
+                        self.Table.item(p, j - diff).setForeground(
                             QColor(210, 210, 0)
                         )
                     z += 1
 
             self.Table.item(p, 1).setFont(font)
-    
+
     def updateStatus(self):
         """обновляем статус и информацию"""
         try:
