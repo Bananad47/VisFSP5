@@ -410,7 +410,6 @@ hh:mm:ss"""
                         p, j - diff, QTableWidgetItem(str(data[i][self.namesql[j]]))
                     )
                 elif j == 10:
-                    print(self.namesql[j], self.namesql)
                     self.Table.setItem(
                         p, 9, QTableWidgetItem(str(data[i][self.namesql[j]]))
                     )
