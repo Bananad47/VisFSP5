@@ -1,5 +1,6 @@
 import pyqtgraph as pg
 import sql_test_module
+import json
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QColor
@@ -192,14 +193,9 @@ class Detailed(QDialog):
         self.exitButton.clicked.connect(self.close)
 
     def setupImage(
-        self, data
-    ):  ######################################################################################################## стереть data и убрать коментарий со следущей строки
-        """создаем график"""
-        # data = json.dumps(data)
-        data = [
-            [[5, 5, 7, 10, 10, 5], [20, 13, 10, 10, 20, 20]],
-            [[6, 8, 10], [18, 15, 12]],
-        ]  # это пример данных, его потом нужно удалить и добавить data = json.dumps(data) для распаковки json
+            self, data
+    ):
+        data = json.loads(data)
 
         self.graph = Graph(data)
 
@@ -268,13 +264,13 @@ class Detailed(QDialog):
                         1, i // 2, QTableWidgetItem(str(data[names2[i + 1]]))
                     )
                     if abs(float(data[names2[i + 1]]) - float(data[names2[i]])) >= float(
-                        data2[names3[i // 2] + "b"]
+                            data2[names3[i // 2] + "b"]
                     ):
                         self.bigTable.item(1, i // 2).setForeground(
                             QColor(255, 0, 0)
                         )
                     elif abs(float(data[names2[i + 1]]) - float(data[names2[i]])) < float(
-                        data2[names3[i // 2] + "w"]
+                            data2[names3[i // 2] + "w"]
                     ):
                         self.bigTable.item(1, i // 2).setForeground(
                             QColor(0, 150, 0)
